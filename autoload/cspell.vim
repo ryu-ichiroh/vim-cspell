@@ -1,25 +1,35 @@
-let g:cspell#words = []
+let g:cspell#bad_words = []
 
-function s:lint_callback(channel, msg)
-  let word = trim(a:msg)
-  if (word =~ 'CSpell')
-    return
+function s:lint_callback(...)
+  let words = []
+  if has('nvim')
+    let words = a:2
+  else
+    let words = [trim(a:2)]
   endif
 
-  echomsg 'word' word
-  call add(g:cspell#words, word)
+  for word in words
+    if (word == '' || word =~ '^CSpell: .*$')
+      return
+    endif
+    call add(g:cspell#bad_words, word)
+  endfor
 endfunction
 
-function s:lint_on_close(channel)
-  call spelunker#words#highlight(g:cspell#words)
+function s:lint_on_close(...)
+  call spelunker#words#highlight(g:cspell#bad_words)
+  let g:cspell#bad_words = []
 endfunction
 
 function cspell#lint()
   let cmd = s:get_command()
   let full_path = fnamemodify(expand('%'), ':p')
-  let g:cspell#words = []
-  let command = cmd . ' lint --no-color --no-progress --words-only --unique ' . full_path . ' 1>&2'
-  call job_start(command, { "callback": "s:lint_callback", "close_cb": "s:lint_on_close", "mode": "raw"})
+  let command = cmd . ' lint --no-color --no-progress --words-only --unique ' . full_path . ' 2>&1'
+  if has('nvim')
+    call jobstart(command, { "on_stdout": function("s:lint_callback"), "on_exit": function("s:lint_on_close")})
+  else
+    call job_start(command, { "callback": "s:lint_callback", "close_cb": "s:lint_on_close", "mode": "raw"})
+  endif
 endfunction
 
 function! s:get_command() abort
