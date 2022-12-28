@@ -13,8 +13,12 @@ For [vim-plug](https://github.com/junegunn/vim-plug)
 ```vimscript
 
 call plug#begin()
+  ...
+
   Plug 'kamykn/spelunker.vim'
-  Plug 'ryicoh/vim-cspell.vim'
+  Plug 'ryicoh/vim-cspell'
+
+  ...
 call plug#end()
 
 let g:spelunker_disable_auto_group = 1
