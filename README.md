@@ -22,4 +22,8 @@ call plug#begin()
 call plug#end()
 
 let g:spelunker_disable_auto_group = 1
+augroup MyCSpell
+  au!
+  au User ChangeCSpellUnknownWord call spelunker#words#highlight(map(cspell#get_unknown_words(), { _, k -> k.unknown_word }))
+augroup end
 ```
