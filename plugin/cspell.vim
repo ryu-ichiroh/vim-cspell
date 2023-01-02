@@ -13,7 +13,7 @@
 " limitations under the License.
 
 
-if !exists('g:cspell#disabled')
+if !exists('g:cspell_disable_autogroup')
   augroup CSpell
     autocmd!
     autocmd BufWinEnter,BufWritePost * call cspell#lint()

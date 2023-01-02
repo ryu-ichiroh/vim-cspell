@@ -13,48 +13,106 @@
 " limitations under the License.
 
 
-let g:cspell#bad_words = []
+let s:unknown_words_by_buf = {}
 
-function s:lint_callback(...)
-  let words = []
-  if has('nvim')
-    let words = a:2
-  else
-    let words = [trim(a:2)]
+let s:latest_lint_job = 0
+
+function! cspell#lint() abort
+  let cmd = s:get_command() . ' 2>&1'
+
+  let s:unknown_words_by_buf[bufnr()] = []
+  let s:latest_lint_job = s:job_start(cmd, function('s:lint_callback'))
+endfunction
+
+function! cspell#get_unknown_words() abort
+  let buf = bufnr()
+  if has_key(s:unknown_words_by_buf, buf)
+    return s:unknown_words_by_buf[buf]
   endif
 
-  for word in words
-    if (word == '' || word =~ '^CSpell: .*$')
+  return []
+endfunction
+
+function! s:lint_callback(...) abort
+  let lines = s:get_stdout(a:1)
+
+  for line in lines
+    let unknown_words = s:parse_line(line)
+    if empty(unknown_words)
       return
     endif
-    call add(g:cspell#bad_words, word)
+
+    if has_key(s:unknown_words_by_buf, bufnr())
+      call add(s:unknown_words_by_buf[bufnr()], unknown_words)
+    else
+      let s:unknown_words_by_buf[bufnr()] = [unknown_words]
+    endif
+
   endfor
-endfunction
 
-function s:lint_on_close(...)
-  call spelunker#words#highlight(g:cspell#bad_words)
-  let g:cspell#bad_words = []
-endfunction
-
-function cspell#lint()
-  let cmd = s:get_command()
-  let full_path = fnamemodify(expand('%'), ':p')
-  let command = cmd . ' lint --no-color --no-progress --words-only --unique ' . full_path . ' 2>&1'
-  if has('nvim')
-    call jobstart(command, { "on_stdout": function("s:lint_callback"), "on_exit": function("s:lint_on_close")})
-  else
-    call job_start(command, { "callback": "s:lint_callback", "close_cb": "s:lint_on_close", "mode": "raw"})
+  if exists('#User#ChangeCSpellUnknownWord')
+    doautocmd User ChangeCSpellUnknownWord
   endif
+endfunction
+
+function! s:parse_line(line) abort
+  let matched = matchstr(a:line, ' - Unknown word \(.*\) Suggestions: [.*')
+  if matched ==? ''
+    return {}
+  endif
+
+  let unknown_words = matched[stridx(matched, '(')+1:stridx(matched, ')')-1]
+  let suggestions = map(split(matched[stridx(matched, '[')+1:stridx(matched, ']')-1], ','), { _, v -> trim(v) })
+
+  return {'unknown_word': unknown_words, 'suggestions': suggestions}
 endfunction
 
 function! s:get_command() abort
+  let full_path = fnamemodify(expand('%'), ':p')
+  let args = ' --no-color --no-progress --no-summary --show-suggestions '
   if exists('g:cspell#command')
-    return g:cspell#command
-  elseif executable('cspell')
+    return g:cspell#command . args . full_path
+  endif
+
+  let cmd = s:get_command_path()
+  return cmd . ' lint --no-gitignore --dot --unique' . args . full_path
+endfunction
+
+function! s:get_command_path() abort
+  if executable('cspell')
     return 'cspell'
   elseif executable('cspell-cli')
     return 'cspell-cli'
   else
-    throw 'Please install "cspell" from https://cspell.org/docs/installation/'
-  end
+    throw 'CSpell not found'
+  endif
+endfunction
+
+
+let s:stdout_by_job = {}
+
+function! s:job_start(cmd, callback) abort
+  return cspell#job#start(a:cmd, {
+  \ 'on_stdout': function('s:on_stdout'),
+  \ 'on_exit': function(a:callback),
+  \ })
+endfunction
+
+function! s:on_stdout(...) abort
+  let job = a:1
+  let stdout = a:2
+
+  if !has_key(s:stdout_by_job, job)
+    let s:stdout_by_job[job] = stdout
+  else
+    let s:stdout_by_job[job] = extend(s:stdout_by_job[job], stdout)
+  endif
+endfunction
+
+function! s:get_stdout(job) abort
+  if has_key(s:stdout_by_job, a:job)
+    return filter(s:stdout_by_job[a:job], {k, v -> v != ''})
+  endif
+
+  return []
 endfunction

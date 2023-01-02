@@ -1,0 +1,49 @@
+name: Test
+on: [push]
+jobs:
+  test:
+    name: ${{ matrix.os }} / ${{ matrix.vi }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, windows-2022, macos-11]
+        vi: [neovim, vim]
+        exclude:
+          - os: windows-2022
+            vi: vim
+    steps:
+      - name: Clone vim-cspell
+        uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install CSpell
+        run: npm install -g cspell
+
+      - name: Install vim-themis
+        uses: actions/checkout@v2
+        with:
+          repository: thinca/vim-themis
+          path: vim-themis
+
+      - name: Install ${{ matrix.vi }}
+        uses: rhysd/action-setup-vim@v1
+        id: vim
+        with:
+          version: 'stable'
+          neovim: ${{ matrix.vi == 'neovim' }}
+
+      - name: Run tests
+        timeout-minutes: 5
+        env:
+          THEMIS_VIM: ${{ steps.vim.outputs.executable }}
+        run: ./vim-themis/bin/themis ./test/test.vim
+  post-test:
+    name: All tests passed
+    runs-on: ubuntu-20.04
+    needs: test
+    steps:
+      - run: echo ok
