@@ -1,4 +1,4 @@
-# vim-cspell [![Test](https://github.com/ryicoh/vim-cspell/actions/workflows/test.yml/badge.svg)](https://github.com/ryicoh/vim-cspell/actions/workflows/test.yml)
+# vim-cspell [![Test](https://github.com/ryuichiroh/vim-cspell/actions/workflows/test.yml/badge.svg)](https://github.com/ryuichiroh/vim-cspell/actions/workflows/test.yml)
 
 vim-cspell is a plugin that checks spelling by using [cspell](https://cspell.org) for Vim/Neovim.
 
@@ -12,6 +12,6 @@ For [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
 
-Plug 'ryicoh/vim-cspell', {'tag': 'v0.3'}
+Plug 'ryuichiroh/vim-cspell', {'tag': 'v0.3'}
 
 ```
