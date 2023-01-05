@@ -13,21 +13,21 @@
 " limitations under the License.
 
 
-let s:unknown_words_by_buf = {}
+let s:bad_words_by_buf = {}
 
 let s:latest_lint_job = 0
 
 function! cspell#lint() abort
   let cmd = s:get_command() . ' 2>&1'
 
-  let s:unknown_words_by_buf[bufnr()] = []
+  let s:bad_words_by_buf[bufnr()] = []
   let s:latest_lint_job = s:job_start(cmd, function('s:lint_callback'))
 endfunction
 
-function! cspell#get_unknown_words() abort
+function! cspell#get_bad_words() abort
   let buf = bufnr()
-  if has_key(s:unknown_words_by_buf, buf)
-    return copy(s:unknown_words_by_buf[buf])
+  if has_key(s:bad_words_by_buf, buf)
+    return copy(s:bad_words_by_buf[buf])
   endif
 
   return []
@@ -36,46 +36,51 @@ endfunction
 function! s:lint_callback(...) abort
   let lines = s:get_stdout(a:1)
 
+  let buf = bufnr()
   for line in lines
-    let unknown_words = s:parse_line(line)
-    if empty(unknown_words)
+    let bad_words = s:parse_line(line)
+    if empty(bad_words)
       return
     endif
 
-    if has_key(s:unknown_words_by_buf, bufnr())
-      call add(s:unknown_words_by_buf[bufnr()], unknown_words)
+    if has_key(s:bad_words_by_buf, buf)
+      call add(s:bad_words_by_buf[buf], bad_words)
     else
-      let s:unknown_words_by_buf[bufnr()] = [unknown_words]
+      let s:bad_words_by_buf[buf] = [bad_words]
     endif
-
   endfor
 
-  if exists('#User#ChangeCSpellUnknownWord')
-    doautocmd User ChangeCSpellUnknownWord
+  if !exists('g:cspell_disable_highlight')
+    call s:highlight_cspell(buf)
+  endif
+
+  if exists('#User#CSpellBadWordChanged')
+    doautocmd User CSpellBadWordChanged
   endif
 endfunction
 
+
 function! s:parse_line(line) abort
   let matched = matchstr(a:line, ' - Unknown word \(.*\) Suggestions: [.*')
-  if matched ==? ''
+  if matched ==# ''
     return {}
   endif
 
-  let unknown_words = matched[stridx(matched, '(')+1:stridx(matched, ')')-1]
+  let bad_words = matched[stridx(matched, '(')+1:stridx(matched, ')')-1]
   let suggestions = map(split(matched[stridx(matched, '[')+1:stridx(matched, ']')-1], ','), { _, v -> trim(v) })
 
-  return {'unknown_word': unknown_words, 'suggestions': suggestions}
+  return {'bad_word': bad_words, 'suggestions': suggestions}
 endfunction
 
 function! s:get_command() abort
   let full_path = fnamemodify(expand('%'), ':p')
-  let args = ' --no-color --no-progress --no-summary --show-suggestions '
-  if exists('g:cspell#command')
-    return g:cspell#command . args . full_path
+  let args = ' --no-color --no-progress --no-summary --show-suggestions --unique '
+  if exists('g:cspell_command')
+    return g:cspell_command . args . full_path
   endif
 
   let cmd = s:get_command_path()
-  return cmd . ' lint --no-gitignore --dot --unique' . args . full_path
+  return cmd . ' lint --no-gitignore --dot' . args . full_path
 endfunction
 
 function! s:get_command_path() abort
@@ -115,4 +120,25 @@ function! s:get_stdout(job) abort
   endif
 
   return []
+endfunction
+
+
+let s:highlight_by_buf = {}
+
+if !hlexists('CSpellBad')
+  highlight link CSpellBad Underlined
+endif
+
+function! s:highlight_cspell(buf) abort
+  let words = cspell#get_bad_words()
+  if len(words) ==# 0
+    return
+  endif
+
+  call map(words, { _, k -> k.bad_word })
+  if has_key(s:highlight_by_buf, a:buf)
+    call matchdelete(s:highlight_by_buf[a:buf])
+  endif
+
+  let s:highlight_by_buf[a:buf] = matchadd('CSpellBad', '\(' . join(words, '\|') . '\)')
 endfunction

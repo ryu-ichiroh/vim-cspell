@@ -28,19 +28,19 @@ function! s:suite.parse_line()
   let test_cases = [
     \ {
     \   'input': 'test/data/words1.txt:1:1 - Unknown word (helo) Suggestions: [helot, held, hell, helm, help]',
-    \   'expect': {'unknown_word': 'helo', 'suggestions': ['helot', 'held', 'hell', 'helm', 'help']},
+    \   'expect': {'bad_word': 'helo', 'suggestions': ['helot', 'held', 'hell', 'helm', 'help']},
     \ },
     \ {
     \   'input': 'test/data/words1.txt:3:1 - Unknown word (hewo) Suggestions: [hewn, hews, hero, Hero, hew]',
-    \   'expect': {'unknown_word': 'hewo', 'suggestions': ['hewn', 'hews', 'hero', 'Hero', 'hew']},
+    \   'expect': {'bad_word': 'hewo', 'suggestions': ['hewn', 'hews', 'hero', 'Hero', 'hew']},
     \ },
     \ {
     \   'input': 'test/data/words1.txt:4:1 - Unknown word (heloo) Suggestions: [helot, helio, hello, Helot, holo]',
-    \   'expect': {'unknown_word': 'heloo', 'suggestions': ['helot', 'helio', 'hello', 'Helot', 'holo']},
+    \   'expect': {'bad_word': 'heloo', 'suggestions': ['helot', 'helio', 'hello', 'Helot', 'holo']},
     \ },
     \ {
     \   'input': 'test/data/words1.txt:4:7 - Unknown word (rldw) Suggestions: [rads, redd, rede, redo, reds]',
-    \   'expect': {'unknown_word': 'rldw', 'suggestions': ['rads', 'redd', 'rede', 'redo', 'reds']},
+    \   'expect': {'bad_word': 'rldw', 'suggestions': ['rads', 'redd', 'rede', 'redo', 'reds']},
     \ },
     \ ]
   for test_case in test_cases
@@ -51,19 +51,19 @@ function! s:suite.parse_line()
 endfunction
 
 function! s:suite.lint()
-  call s:assert.equals(cspell#get_unknown_words(), [])
+  call s:assert.equals(cspell#get_bad_words(), [])
   let g:called = 0
   augroup CSpellTest
-    autocmd User ChangeCSpellUnknownWord let g:called += 1
+    autocmd User CSpellBadWordChanged let g:called += 1
   augroup end
 
   edit test/data/words1.txt
 
   call s:assert.not_equals(s:cspell_vars.latest_lint_job, 0)
   call cspell#job#wait([s:cspell_vars.latest_lint_job], s:cspell_cli_timeout)
-  call s:assert.equals(g:called, 1, 'autocmd ChangeCSpellUnknownWord should be triggered')
+  call s:assert.equals(g:called, 1, 'autocmd CSpellBadWordChanged should be triggered')
 
-  let expect = [{'suggestions': ['helot', 'held', 'hell', 'helm', 'help'], 'unknown_word': 'helo'}, {'suggestions': ['hewn', 'hews', 'hero', 'Hero', 'hew'], 'unknown_word': 'hewo'}, {'suggestions': ['helot', 'helio', 'hello', 'Helot', 'holo'], 'unknown_word': 'heloo'}, {'suggestions': ['rads', 'redd', 'rede', 'redo', 'reds'], 'unknown_word': 'rldw'}]
-  let actual = cspell#get_unknown_words()
+  let expect = [{'suggestions': ['helot', 'held', 'hell', 'helm', 'help'], 'bad_word': 'helo'}, {'suggestions': ['hewn', 'hews', 'hero', 'Hero', 'hew'], 'bad_word': 'hewo'}, {'suggestions': ['helot', 'helio', 'hello', 'Helot', 'holo'], 'bad_word': 'heloo'}, {'suggestions': ['rads', 'redd', 'rede', 'redo', 'reds'], 'bad_word': 'rldw'}]
+  let actual = cspell#get_bad_words()
   call s:assert.equals(expect, actual)
 endfunction
