@@ -5,45 +5,69 @@ CONTENTS                                                       *cspell-contents*
 
 1. vim-cspell................................................|cspell-vim-cspell|
 2. Installation............................................|cspell-installation|
-4. API..............................................................|cspell-api|
+3. FUNCTIONS..................................................|cspell-functions|
+4. VARIABLES..................................................|cspell-variables|
+5. HIGHLIGHT..................................................|cspell-highlight|
+6. EVENT..........................................................|cspell-event|
 
 ================================================================================
 VIM-CSPELL                                                   *cspell-vim-cspell*
 
-vim-cspell is a plugin that checks spelling by using [cspell](https:
-//cspell.org) for Vim/Neovim.
+vim-cspell is a plugin that checks spelling by using 
+[cspell](https://cspell.org) for Vim/Neovim.
 
 --------------------------------------------------------------------------------
 INSTALLATION                                               *cspell-installation*
 
-Install cspell command from the link below
+1. Install `cspell` command.
+
+>
+    $ npm install -g cspell
+<
+
+See the official page for more details.
 
 https://cspell.org/docs/installation/
 
-Add 'kamykn/spelunker.vim' and 'ryicoh/vim-cspell' to your favorite plugin
-manager.
+
+2. Add 'ryicoh/vim-cspell' to your favorite plugin manager.
 
 * for vim-plug
 >
-    call plug#begin()
-      ...
-
-      Plug 'kamykn/spelunker.vim'
-      Plug 'ryicoh/vim-cspell'
-
-      ...
-    call plug#end()
-
-    let g:spelunker_disable_auto_group = 1
-
+    Plug 'ryicoh/vim-cspell', {'tag': 'v0.3'}
 <
-API                                                                *cspell-api*
+FUNCTIONS                                                     *cspell-functions*
 
 *   `cspell#lint()`
-    run cspell and highlight bad words.
+    Run CSpell asynchronously and highlight bad words.
 
-*   `g:cspell#command`
-    cspell executable location.
+*   `cspell#get_bad_words()`
+    Get bad words on current buffer.
+
+VARIABLES                                                     *cspell-variables*
+
+*   `g:cspell_command`
+    The command to run CSpell. Default command is
+
+>
+    cspell lint --no-gitignore --dot
+<
+
+*   `g:cspell_disable_highlight`
+    Whether to disable highlight.
+
+*   `g:cspell_disable_autogroup`
+    Whether to disable autogroup to run cspell automatically.
+
+HIGHLIGHT                                                     *cspell-highlight*
+
+*   `CSpellBad`
+    word which CSpell says "Unknown word".
+
+EVENT                                                             *cspell-event*
+
+*   `CSpellBadWordChanged`
+    User event triggered when bad words are changed.
 
 ===============================================================================
 vim:tw=78:fo=tcq2mM:ts=8:ft=help:norl
