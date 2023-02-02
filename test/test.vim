@@ -42,7 +42,10 @@ function! s:suite.parse_line()
     \   'input': 'test/data/words1.txt:4:7 - Unknown word (rldw) Suggestions: [rads, redd, rede, redo, reds]',
     \   'expect': {'bad_word': 'rldw', 'suggestions': ['rads', 'redd', 'rede', 'redo', 'reds']},
     \ },
-    \ ]
+    \ {
+    \    'input': 'vim-vimlparser/autoload/vimlparser.vim:6352:36 - Unknown word (mlvc) Suggestions: [mlle, melva, Mlle, move, melic]',
+    \   'expect': {'bad_word': 'mlvc', 'suggestions': ['mlle', 'melva', 'Mlle', 'move', 'melic']},
+    \ }]
   for test_case in test_cases
     let actual = s:cspell_funcs.parse_line(test_case.input)
     call s:assert.equals(test_case.expect, actual)
