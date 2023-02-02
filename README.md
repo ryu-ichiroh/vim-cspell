@@ -12,6 +12,6 @@ For [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
 
-Plug 'ryuichiroh/vim-cspell', {'tag': 'v0.3'}
+Plug 'ryuichiroh/vim-cspell', {'tag': 'v0.4'}
 
 ```
