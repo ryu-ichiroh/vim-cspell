@@ -62,6 +62,14 @@ VARIABLES                                                     *cspell-variables*
 *   `g:cspell_disable_vim9script`
     Whether to disable to use vim9script.
 
+*   `g:cspell_max_bad_words`
+    If you are editing large files (>1000 lines), Recommend to set the
+    variable.
+    For example:
+>
+    let g:cspell_max_bad_words = 100
+<
+
 HIGHLIGHT                                                     *cspell-highlight*
 
 *   `CSpellBad`

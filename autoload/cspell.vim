@@ -37,6 +37,9 @@ endfunction
 
 function! s:lint_callback(...) abort
   let lines = s:get_stdout(a:1)
+  if exists('g:cspell_max_bad_words') && len(lines) > g:cspell_max_bad_words
+    let lines = lines[:g:cspell_max_bad_words]
+  endif
 
   let buf = bufnr()
   for line in lines
