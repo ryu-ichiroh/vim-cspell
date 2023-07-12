@@ -1,26 +1,31 @@
-# Name of person
+# Proper Name
 Ryuichiroh
 Ikeuchi
 ryicoh
 kamykn
+Neovim
 
-# Vim
-bufnr
+# Vim syntax
 endfunction
 endfor
+
+# Vim commands or functions
+bufnr
 doautocmd
 autocmd
 augroup
-autogroup
-matchstr
 stridx
 fnamemodify
-Neovim
 autoload
+hlexists
+matchdelete
+matchadd
+matchstr
 norl
 
 # Name of variable
 funcs
+autogroup
 
 # Test data
 helo
