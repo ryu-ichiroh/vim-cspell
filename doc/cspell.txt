@@ -30,11 +30,11 @@ See the official page for more details.
 https://cspell.org/docs/installation/
 
 
-2. Add 'ryicoh/vim-cspell' to your favorite plugin manager.
+2. Add 'ryuichiroh/vim-cspell' to your favorite plugin manager.
 
 * for vim-plug
 >
-    Plug 'ryicoh/vim-cspell', {'tag': 'v0.3'}
+    Plug 'ryuichiroh/vim-cspell', {'tag': 'v0.3'}
 <
 FUNCTIONS                                                     *cspell-functions*
 
