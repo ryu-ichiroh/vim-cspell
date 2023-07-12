@@ -140,6 +140,7 @@ function! s:highlight_cspell(buf) abort
     let id = s:highlight_by_buf[a:buf]
     try
       call matchdelete(id)
+    catch
     finally
       call remove(s:highlight_by_buf, a:buf)
     endtry
