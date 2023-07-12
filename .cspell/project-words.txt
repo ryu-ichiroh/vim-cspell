@@ -24,6 +24,8 @@ matchadd
 matchstr
 norl
 enddef
+isdirectory
+filereadable
 
 # Name of variable
 funcs
