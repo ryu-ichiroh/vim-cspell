@@ -20,9 +20,15 @@ let s:latest_lint_job = 0
 let s:use_vim9script = has('vim9script') && !exists('g:cspell_disable_vim9script')
 
 function! cspell#lint() abort
+  let file = expand('%')
+  if isdirectory(file) || !filereadable(file)
+    return
+  endif
+
   let cmd = s:get_command() . ' 2>&1'
 
   let s:bad_words_by_buf[bufnr()] = []
+
   let s:latest_lint_job = s:job_start(cmd, function('s:lint_callback'))
 endfunction
 

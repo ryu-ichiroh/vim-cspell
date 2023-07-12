@@ -12,6 +12,11 @@ For [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
 
-Plug 'ryuichiroh/vim-cspell', {'tag': 'v0.4'}
+Plug 'ryuichiroh/vim-cspell', {'tag': 'v0.5'}
 
 ```
+
+# Acknowledgements
+
+* [async.vim](https://github.com/prabirshrestha/async.vim) is embedded with vim-cspell for manage Vim/Neovim jobs. Thanks!
+
