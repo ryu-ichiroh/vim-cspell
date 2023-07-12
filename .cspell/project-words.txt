@@ -8,6 +8,7 @@ Neovim
 # Vim syntax
 endfunction
 endfor
+endtry
 
 # Vim commands or functions
 bufnr

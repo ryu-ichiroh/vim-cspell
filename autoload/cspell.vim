@@ -137,7 +137,12 @@ function! s:highlight_cspell(buf) abort
 
   call map(words, { _, k -> k.bad_word })
   if has_key(s:highlight_by_buf, a:buf)
-    call matchdelete(s:highlight_by_buf[a:buf])
+    let id = s:highlight_by_buf[a:buf]
+    try
+      call matchdelete(id)
+    finally
+      call remove(s:highlight_by_buf, a:buf)
+    endtry
   endif
 
   let s:highlight_by_buf[a:buf] = matchadd('CSpellBad', '\(' . join(words, '\|') . '\)')
