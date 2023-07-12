@@ -23,6 +23,7 @@ matchdelete
 matchadd
 matchstr
 norl
+enddef
 
 # Name of variable
 funcs
@@ -33,3 +34,5 @@ helo
 hewo
 heloo
 rldw
+vimlparser
+mlvc

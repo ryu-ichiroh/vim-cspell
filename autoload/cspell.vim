@@ -17,6 +17,8 @@ let s:bad_words_by_buf = {}
 
 let s:latest_lint_job = 0
 
+let s:use_vim9script = has('vim9script') && !exists('g:cspell_disable_vim9script')
+
 function! cspell#lint() abort
   let cmd = s:get_command() . ' 2>&1'
 
@@ -38,9 +40,13 @@ function! s:lint_callback(...) abort
 
   let buf = bufnr()
   for line in lines
-    let bad_words = s:parse_line(line)
+    if s:use_vim9script
+      let bad_words = ParseLine(line)
+    else
+      let bad_words = s:parse_line(line)
+    endif
     if empty(bad_words)
-      return
+      continue
     endif
 
     if has_key(s:bad_words_by_buf, buf)
@@ -61,7 +67,7 @@ endfunction
 
 
 function! s:parse_line(line) abort
-  let matched = matchstr(a:line, ' - Unknown word \(.*\) Suggestions: [.*')
+  let matched = matchstr(a:line, ' - Unknown word ([^)]\+) Suggestions: \[[^]]\+\]')
   if matched ==# ''
     return {}
   endif
@@ -148,3 +154,22 @@ function! s:highlight_cspell(buf) abort
 
   let s:highlight_by_buf[a:buf] = matchadd('CSpellBad', '\(' . join(words, '\|') . '\)')
 endfunction
+
+
+function! s:init_vim9script() abort
+  def ParseLine(line: string): dict<any>
+    const matched = matchstr(line, ' - Unknown word ([^)]\+) Suggestions: \[[^]]\+\]')
+    if matched ==# ''
+      return {}
+    endif
+
+    const bad_words = matched[stridx(matched, '(') + 1 : stridx(matched, ')') - 1]
+    const suggestions = map(split(matched[stridx(matched, '[') + 1 : stridx(matched, ']') - 1], ','), (_, v) => trim(v) )
+
+    return {'bad_word': bad_words, 'suggestions': suggestions}
+  enddef
+endfunction
+
+if s:use_vim9script
+  call s:init_vim9script()
+endif

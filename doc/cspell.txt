@@ -34,7 +34,7 @@ https://cspell.org/docs/installation/
 
 * for vim-plug
 >
-    Plug 'ryuichiroh/vim-cspell', {'tag': 'v0.3'}
+    Plug 'ryuichiroh/vim-cspell', {'tag': 'v0.4'}
 <
 FUNCTIONS                                                     *cspell-functions*
 
@@ -58,6 +58,9 @@ VARIABLES                                                     *cspell-variables*
 
 *   `g:cspell_disable_autogroup`
     Whether to disable autogroup to run cspell automatically.
+
+*   `g:cspell_disable_vim9script`
+    Whether to disable to use vim9script.
 
 HIGHLIGHT                                                     *cspell-highlight*
 
