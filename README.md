@@ -10,7 +10,7 @@ vim-cspell is a plugin that checks spelling by using [cspell](https://cspell.org
 # Installation
 
 For [vim-plug](https://github.com/junegunn/vim-plug)
-```vimscript
+```vim
 
 call plug#begin()
   ...
