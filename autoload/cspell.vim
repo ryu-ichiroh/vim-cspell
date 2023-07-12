@@ -27,7 +27,7 @@ endfunction
 function! cspell#get_unknown_words() abort
   let buf = bufnr()
   if has_key(s:unknown_words_by_buf, buf)
-    return deepcopy(s:unknown_words_by_buf[buf])
+    return copy(s:unknown_words_by_buf[buf])
   endif
 
   return []
