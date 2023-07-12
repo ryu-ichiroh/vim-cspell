@@ -20,7 +20,7 @@ Install cspell command from the link below
 
 https://cspell.org/docs/installation/
 
-Add 'kamykn/spelunker.vim' and 'ryicoh/vim-cspell' to your favarite plugin
+Add 'kamykn/spelunker.vim' and 'ryicoh/vim-cspell' to your favorite plugin
 manager.
 
 * for vim-plug
@@ -43,7 +43,7 @@ API                                                                *cspell-api*
     run cspell and highlight bad words.
 
 *   `g:cspell#command`
-    cspella executable location.
+    cspell executable location.
 
 ===============================================================================
 vim:tw=78:fo=tcq2mM:ts=8:ft=help:norl

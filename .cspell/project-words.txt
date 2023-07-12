@@ -1,0 +1,29 @@
+# Name of person
+Ryuichiroh
+Ikeuchi
+ryicoh
+kamykn
+
+# Vim
+bufnr
+endfunction
+endfor
+doautocmd
+autocmd
+augroup
+autogroup
+matchstr
+stridx
+fnamemodify
+Neovim
+autoload
+norl
+
+# Name of variable
+funcs
+
+# Test data
+helo
+hewo
+heloo
+rldw
