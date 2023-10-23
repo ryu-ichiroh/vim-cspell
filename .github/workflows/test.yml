@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: 16
       - name: Install CSpell
-        run: npm install -g cspell
+        run: npm install -g cspell@v7.3
 
       - name: Install vim-themis
         uses: actions/checkout@v2

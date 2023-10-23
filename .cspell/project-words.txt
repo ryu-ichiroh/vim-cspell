@@ -1,6 +1,7 @@
 # Proper Name
 Ryuichiroh
 Ikeuchi
+ichiroh
 ryicoh
 kamykn
 Neovim
