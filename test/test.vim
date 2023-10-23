@@ -66,7 +66,7 @@ function! s:suite.lint()
   call cspell#job#wait([s:cspell_vars.latest_lint_job], s:cspell_cli_timeout)
   call s:assert.equals(g:called, 1, 'autocmd CSpellBadWordChanged should be triggered')
 
-  let expect = [{'suggestions': ['helot', 'held', 'hell', 'helm', 'help'], 'bad_word': 'helo'}, {'suggestions': ['hewn', 'hews', 'hero', 'Hero', 'hew'], 'bad_word': 'hewo'}, {'suggestions': ['helot', 'helio', 'hello', 'Helot', 'holo'], 'bad_word': 'heloo'}, {'suggestions': ['rads', 'redd', 'rede', 'redo', 'reds'], 'bad_word': 'rldw'}]
+  let expect = [{'bad_word': 'helo', 'suggestions': ['halo', 'held', 'hell', 'helm', 'help']}, {'bad_word': 'hewo', 'suggestions': ['hero', 'hewn', 'hews', 'Hero', 'hew']}, {'bad_word': 'heloo', 'suggestions': ['helio', 'hello', 'helot', 'Helot', 'holo']}, {'bad_word': 'rldw', 'suggestions': ['rads', 'redd', 'rede', 'redo', 'reds']}]
   let actual = cspell#get_bad_words()
-  call s:assert.equals(expect, actual)
+  call s:assert.equals(actual, expect)
 endfunction
