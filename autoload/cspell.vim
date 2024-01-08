@@ -147,6 +147,14 @@ endif
 function! s:highlight_cspell(buf) abort
   let words = cspell#get_bad_words()
   if len(words) ==# 0
+    if has_key(s:highlight_by_buf, a:buf)
+      let id = s:highlight_by_buf[a:buf]
+      try
+        call matchdelete(id)
+      catch
+      endtry
+    endif
+
     return
   endif
 
